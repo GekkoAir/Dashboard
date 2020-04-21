@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>Search</title>
+</head>
+
+<div class="grid">
+
+    <div class="header">
+        <a href="#">
+            <div class="logo"><img src="/img/logo.png" alt="logo"></div>
+        </a>
+        <div class="links">
+            <ul>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="space-left"></div>
+
+    <div class="panel">
+        <div class="panel-title">
+            <h6>Search</h6>
+        </div>
+        <p class="breadcrumb"><a href="../index.html">Home</a> → <b>Search Results</b></p>
+        <div class="panel-content">
+
+            <div id="lunrsearchresults ">
+                <ul></ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="side-panel">
+        <div class="side-panel-1">
+            <div class="side-panel-title">
+                Side 1
+            </div>
+            <div class="side-panel-content">
+                Content
+            </div>
+        </div>
+        <div class="side-panel-2">
+            <div class="side-panel-title">
+                Side 2
+            </div>
+            <div class="side-panel-content">
+                Content
+            </div>
+        </div>
+        <div class="side-panel-3">
+            <div class="side-panel-title">
+                Side 2
+            </div>
+            <div class="side-panel-content">
+                <script src="/js/lunr.js"></script>
+
+<script>
+    { % assign counter = 0 %
+    }
+    var documents = [{ %
+        for page in site.pages %
+    } { %
+        if page.url contains '.xml'
+        or page.url contains 'assets' %
+    } { %
+        else %
+    } {
+        "id": {
+            {
+                counter
+            }
+        },
+        "url": "http://localhost:4000/search.html",
+        "title": "",
+        "body": ""
+    }, { % endif %
+    } { % endfor %
+    } { %
+        for page in site.without - plugin %
+    } {
+        "id": {
+            {
+                counter
+            }
+        },
+        "url": "http://localhost:4000/search.html",
+        "title": "",
+        "body": ""
+    }, { % endfor %
+    } { %
+        for page in site.posts %
+    } {
+        "id": {
+            {
+                counter
+            }
+        },
+        "url": "http://localhost:4000/search.html",
+        "title": "",
+        "body": " - "
+    } { %
+        if forloop.last %
+    } { %
+        else %
+    }, { % endif %
+    } { % endfor %
+    }];
+
+    var idx = lunr(function() {
+        this.ref('id')
+        this.field('title')
+        this.field('body')
+
+        documents.forEach(function(doc) {
+            this.add(doc)
+        }, this)
+    });
+
+    function lunr_search(term) {
+        document.getElementById('lunrsearchresults').innerHTML = '<ul></ul>';
+        if (term) {
+            document.getElementById('lunrsearchresults').innerHTML = "<p>Search results for '" + term + "'</p>" + document.getElementById('lunrsearchresults').innerHTML;
+            //put results on the screen.
+            var results = idx.search(term);
+            if (results.length > 0) {
+                //console.log(idx.search(term));
+                //if results
+                for (var i = 0; i < results.length; i++) {
+                    // more statements
+                    var ref = results[i]['ref'];
+                    var url = documents[ref]['url'];
+                    var title = documents[ref]['title'];
+                    var body = documents[ref]['body'].substring(0, 160) + '...';
+                    document.querySelectorAll('#lunrsearchresults ul')[0].innerHTML = document.querySelectorAll('#lunrsearchresults ul')[0].innerHTML + "<li class='lunrsearchresult'><a href='" + url + "'><span class='title'>" + title + "</span><br /><span class='body'>" + body + "</span><br /><span class='url'>" + url + "</span></a></li>";
+                }
+            } else {
+                document.querySelectorAll('#lunrsearchresults ul')[0].innerHTML = "<li class='lunrsearchresult'>No results found...</li>";
+            }
+        }
+        return false;
+    }
+</script>
+<style>
+    .lunrsearchresult .title {
+        color: #d9230f;
+    }
+    
+    .lunrsearchresult .url {
+        color: silver;
+    }
+    
+    .lunrsearchresult a {
+        display: block;
+        color: #777;
+    }
+    
+    .lunrsearchresult a:hover,
+    .lunrsearchresult a:focus {
+        text-decoration: none;
+    }
+    
+    .lunrsearchresult a:hover .title {
+        text-decoration: underline;
+    }
+</style>
+
+<form class="search-box" action="../search.html" onSubmit="return lunr_search(document.getElementById('lunrsearch').value);">
+    <input type="text" class="form-control" id="lunrsearch" name="q" maxlength="255" value="" placeholder="Search via Lunr.js" />
+    <button type="submit "><i class="fa fa-search "></i></button>
+</form>
+
+<div id="lunrsearchresults">
+    <ul></ul>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+
+        <div class="footer-logo">
+            <a href="#">
+                <div class="logo-footer"><img src="img/logo.png" alt="logo"></div>
+            </a>
+            <div class="footer-contacts">
+                <ul>
+                    <li>Sample Information</li>
+                    <li>Sample Information</li>
+                    <li>Sample Information</li>
+                    <li><a href="mailto:#">Sample Email</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-info-1">
+            <div class="footer-title">Information</div>
+            <ul>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-info-2">
+            <div class="footer-title">Information</div>
+            <ul>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-info-3">
+            <div class="footer-title">Information</div>
+            <ul>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+                <li><a href="#">Link</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-social">
+            <div class="footer-title">Social Media</div>
+            <div class="icons">
+                <i class="fa fa-instagram" aria-hidden="true"></i>
+                <i class="fa fa-twitter-square" aria-hidden="true"></i>
+                <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="space-right"></div>
+
+</div>
+
+<body>
+
+</body>
+
+</html>
